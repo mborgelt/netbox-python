@@ -23,13 +23,16 @@ JSONType = Union[None, bool, int, float, str, List[Any], Dict[str, Any]]
 
 
 class NetBoxClient(RestClient):
-    def __init__(self, base_url: str, token: str, headers: Dict[str, str] = None):
+    def __init__(self, base_url: str, token: str, api_v2=False, headers: Dict[str, str] = None):
         self.status = self._status(self)
         self.token = token
 
         headers = headers or NETBOX_DEFAULT_HEADERS
         if token:
-            headers["authorization"] = f"Token {token}"
+            if api_v2:
+                headers["authorization"] = f"Bearer {token}"
+            else:
+                headers["authorization"] = f"Token {token}"
 
         url = base_url = "{}/api".format(base_url if base_url[-1] != "/" else base_url[:-1])
 
